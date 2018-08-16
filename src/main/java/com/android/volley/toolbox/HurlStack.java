@@ -107,9 +107,11 @@ public class HurlStack extends BaseHttpStack {
             // Need to keep the connection open until the stream is consumed by the caller. Wrap the
             // stream such that close() will disconnect the connection.
             keepConnectionOpen = true;
+            List<Header> headers = convertHeaders(connection.getHeaderFields());
+            headers.add(new Header("connectionURL", connection.getURL().toString()));
             return new HttpResponse(
                     responseCode,
-                    convertHeaders(connection.getHeaderFields()),
+                    headers,
                     connection.getContentLength(),
                     new UrlConnectionInputStream(connection));
         } finally {
